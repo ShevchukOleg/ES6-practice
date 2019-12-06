@@ -1,3 +1,4 @@
+'use strict'
 //                                      Game crown anchored
 
 
@@ -62,11 +63,7 @@ console.log(`\tending funds: ${funds}`);
 }
 
 
-const someString = '5';
-const resSome = someString + 3;
-console.log(resSome, typeof (resSome));
-
-
+//---------------------------------------------
 // Фільтрація масиву на унікальні значення
 const arr = ["Гривна", "Рубыль", "Dollar", "Euro", "Funt", "Dollar"];
 
@@ -75,12 +72,12 @@ const strExmpl = "Some text";
 let uniqueValues = arr.filter((value, index, self) => {
   return self.indexOf(value) === index;
 })
-console.log(uniqueValues);
+console.log("Test on unic values 1", uniqueValues);
 
 //___________________________________________________________________________________
 
 let uniqueValues2 = [...new Set(arr)];
-console.log(uniqueValues2);
+console.log("Test on unic values 2", uniqueValues2);
 
 function unique1(arr) {
   let resArr = [],
@@ -101,6 +98,25 @@ console.log(unique1(arr));
 console.log('Result: ', strExmpl.substr(4));
 console.log(typeof NaN);
 
+//               Обчислення дисперсії
+const  data  =  [ 3.3, 5, 7.2, 12, 4, 6, 10.3] ;
+
+const stats =  data.reduce((a, x) => {
+  a.N++;
+  let delta = x - a.mean;
+  a.mean += delta / a.N;
+  a.M2 += delta*(x - a.mean);
+  return a;
+  }, {N: 0, mean: 0, M2: 0});
+
+  if (stats.N > 2) {
+    stats.variance = stats.M2 / (stats.N - 1);
+    stats.stdev = Math.sqrt(stats.variance);
+  }
+
+
+console.log(stats);
+
 //      Валидатор дан больщие и малые буквы англ, знаки и цыфры макс 6 знаков
 
 let str7 = 'zxcbvnb756453';
@@ -117,7 +133,7 @@ console.log(checkString(str8));
 {
   let x = 0, y = 10, z;
   z = (x++, y++);
-  console.log(x, y, z);
+  console.log('Роота оператору кома:', x, y, z);
 }
 
 
@@ -128,7 +144,7 @@ const palindrome = str => {
   return str === str.split('').reverse().join();
 }
 
-//                   Функция вывода и замены чисел (четных 3 и 5)
+//             Функция вывода и замены чисел (четных 3 и 5)
 
 const fizzBuzz = number => {
   for( let i = 1; i <= number; i++) {
@@ -144,7 +160,7 @@ const fizzBuzz = number => {
   }
 }
 
-fizzBuzz(46);
+fizzBuzz(23);
 
 const fizzBuzz2 = number => {
   for( let i = 1; i <= number; i++) {
@@ -160,7 +176,7 @@ const fizzBuzz2 = number => {
   }
 }
 
-fizzBuzz2(46);
+fizzBuzz2(23);
 
 //               Анаграма перевірка рядків на анаграмність
 // 1. Виключаємо всі символи через додаткову функцію, створюємо об'єкт
@@ -192,7 +208,7 @@ const anagram = (str1, str2) => {
   }
 }
 
-console.log(anagram('some', 'omes'));
+console.log('Перевірка на анаграму:', anagram('some', 'omes'));
 
 //                        Пошук голосних букв у строці
 const findVowels = str => {
@@ -222,8 +238,7 @@ function madeFibonacci(n) {
   }
   return fArr[n-1];
 }
-console.log(madeFibonacci);
-console.log(madeFibonacci(10));
+console.log('Десятий знак послідосності Фібоначі через ф1:', madeFibonacci(10));
 
 
 function madeFibonacci2(n) {
@@ -237,7 +252,7 @@ function madeFibonacci2(n) {
   return fArr[n-1];
 }
 
-console.log(madeFibonacci2(10));
+console.log('Десятий знак послідосності Фібоначі через ф2:', madeFibonacci2(10));
 
 // Пеервірка роботи логічних операторів з нелогічними операндами
 function chackOr() {
@@ -303,6 +318,7 @@ console.log(chackAnd());
   console.log(z);
 }
 
+// блочна область видимості
 let age44 = prompt("Сколько Вам лет?", 18);
 
 if (age44 < 18) {
@@ -318,9 +334,117 @@ if (age44 < 18) {
   }
 }
 
-welcome();
+//!! welcome(); =>// не спрацює оскільки функція оголошена у блоці з if
 
-// Створення нови властивостей глобальних об'єктів через прототип
+//* Замикання з присвоєною властивістю функції, доступ у замикання
+function makeCounter() {
+  function counter() {
+    return counter.count++;
+  }
+  counter.count = 1;
+  return counter;
+}
+
+const counter1 = makeCounter();
+console.log(counter1(), counter1(), counter1(), counter1());
+
+counter1.count = 2;
+
+console.log(counter1(), counter1(), counter1(), counter1());
+
+//     Задача на замикання поліфіл на bind
+function personInfo() {
+  console.log(this.name, this.age);
+}
+
+const person1 = {
+  name: "John",
+  age: 25
+};
+
+const person2 = {
+  name: "Eugene",
+  age: 33
+};
+
+function bindAnalog(thisArg, callback) {
+  const propName = `${callback.name}`;
+  console.log(propName);
+  Object.defineProperty(thisArg, propName, {
+    value: callback,
+    writable: true
+  });
+  console.log(thisArg);
+  thisArg[propName]();
+  //!! if(thisArg[propName]) {
+  //!!    delete thisArg[`${propName}`];
+  //!! } - виводить помилку що неможливо видалити значення з об'єкту
+};
+
+bindAnalog(person1, personInfo);
+
+// Варіант 2 з apply
+function bind1(func, context){
+
+	return function(...args) {
+		return func.apply(
+      context,
+      args
+    );
+  }
+}
+
+const a = function () {
+	return this;
+}
+const b = bind1(a, {foo: 'var' });
+const c = bind1(b, null);
+const d = bind1(c, { g: '1' });
+console.log(c())
+
+// задача
+//* var add = function(a,b) { return a+b;}
+//* var add2 = bindFunc(add, 2);
+//* add2(6)  => outputs 8
+//* add2(10) => outputs 12
+// через замикання
+const add = function(a,b) {
+  return a+b;
+};
+
+function bindFunc( callback, arg1) {
+  return function(arg2) {
+    return callback(arg1, arg2);
+  }
+}
+
+const add2 = bindFunc(add, 2);
+
+console.log(add2(10));
+
+//через apply & karryng
+const bindFuncApply = ( callback, ...params) => {
+  return callback.bind(null, ...params)
+}
+
+const add5 = bindFunc(add, 5);
+
+console.log(add5(10));
+
+// Перевірка коду статті
+function bind3(callcback, context) {
+  return function() {
+    return callcback.apply(context, arguments);
+  }
+}
+
+function test1() {
+  alert(this);
+}
+
+const g = bind3(test1, 'Context');
+g();
+// Створення нових властивостей глобальних об'єктів через прототип
 Array.prototype.doit = function() {
   return "Go";
 }
@@ -453,5 +577,62 @@ let count = function () {
   } ;
 }();
 
-
 console.log(count(), count());
+
+
+// Області видимості та Hoisting
+const x = 3;
+
+function f() {
+  console.log(x);
+  console.log(y);
+  return [x, y];
+}
+//* Функція f підіймається в початок своєї області видимості перед
+//* виконанням коду
+
+const y = 5;
+console.log(f());
+
+
+function hoist() {
+  abatractVariable = 20;
+  var betaVariable = 100;
+}
+
+hoist();
+
+console.log(abatractVariable);
+/*
+Доступ как к глобальной переменной вне функции hoist()
+Выводит: 20
+*/
+// console.log(betaVariable);
+
+let array1a = ['a', 'b', 'c', 'd', 'e'];
+console.log(array1a.copyWithin(1, 3))
+
+//       Прототипне спадкування та властивості-скцессори
+let userA1 = {
+  name: "John",
+
+  set fullName(value) {
+    this.name = value;
+  },
+
+  get fullName() {
+    return this.name;
+  }
+};
+
+let admin = {
+  __proto__: userA1,
+  isAdmin: true
+};
+
+console.log(admin.fullName); // John
+
+// срабатывает сеттер!
+admin.fullName = "Alice Cooper"; // (**)
+console.log(admin.name); // Alice
+console.log(userA1.name);
