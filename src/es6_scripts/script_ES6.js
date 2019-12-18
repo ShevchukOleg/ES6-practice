@@ -135,6 +135,17 @@ console.log(checkString(str8));
   z = (x++, y++);
   console.log('Роота оператору кома:', x, y, z);
 }
+// оператори rest spread
+
+function useSpread (a, b, c, d) {
+  console.log(a, b, c, d, arguments);
+}
+
+useSpread(...data);
+
+let [...el] = document.querySelectorAll('div')
+console.log(el);
+
 
 
 // Проверка слова на паллиндром
@@ -424,10 +435,10 @@ console.log(add2(10));
 
 //через apply & karryng
 const bindFuncApply = ( callback, ...params) => {
-  return callback.bind(null, ...params)
+  return callback.bind(null, ...params);
 }
 
-const add5 = bindFunc(add, 5);
+const add5 = bindFuncApply(add, 5);
 
 console.log(add5(10));
 
@@ -596,13 +607,13 @@ console.log(f());
 
 
 function hoist() {
-  abatractVariable = 20;
+  // **abatractVariable = 20;
   var betaVariable = 100;
 }
 
 hoist();
 
-console.log(abatractVariable);
+// ** console.log(abatractVariable);  не спрацює через use strict d ES5 було доступним
 /*
 Доступ как к глобальной переменной вне функции hoist()
 Выводит: 20
@@ -636,3 +647,71 @@ console.log(admin.fullName); // John
 admin.fullName = "Alice Cooper"; // (**)
 console.log(admin.name); // Alice
 console.log(userA1.name);
+
+
+// ___________________________Міксини в JS
+/**
+ * Vehicle -  клас ранспортного засобу (клас вищого порядку)
+ */
+class Vehicle {
+  constructor() {
+    this.passengers = [];
+    console.log("Транспорт создан");
+  }
+  addPassengers(p) {
+    this.passengers.push(p);
+  }
+}
+/**
+ * Car- клас простого авто
+ */
+class Car extends Vehicle {
+  constructor (model, color) {
+    super();
+    this.model = model;
+    this.color = color;
+    console.log("Автомобиль создан");
+  }
+}
+console.log("Прототип та __proto__ класу", Car.prototype, Car.__proto__);
+
+/**
+ * InsurancePolicy- клас що описує тип страхування
+ */
+class InsurancePolicy {
+  constructor(serial, type) {
+    this.serial = serial;
+    this.type = type;
+  }
+}
+
+/**
+ * функція міксин, що додає методи до прототипу класу -> в клас вищого порядку
+ * @param {*} prototypeOfClass
+ */
+function mixinCarInsurence(prototypeOfClass) {
+
+  prototypeOfClass.addInsuransePolicy = function(policy) { this.insurancePolicy = policy; }
+
+  prototypeOfClass.getInsuransePolicy = function() { return this.insurancePolicy;}
+
+  prototypeOfClass.isInsured = function() {
+    return !!this.insurancePolicy;
+  }
+}
+
+/**
+ * застосування міксину
+ */
+mixinCarInsurence(Car.prototype);
+/**
+ * створення екземпляру класу з модифікованим прототипом
+ */
+const car1 = new Car("Tesla", "white");
+console.log("Прототип та __proto__ об'єкту екз класу", car1.prototype, car1.__proto__);
+/**
+ * виклик додаткового методу з прототипу
+ */
+car1.addInsuransePolicy(new InsurancePolicy(1001, "simple"));
+
+console.log(Object.keys(car1), car1);
