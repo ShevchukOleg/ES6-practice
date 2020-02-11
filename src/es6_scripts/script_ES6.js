@@ -73,7 +73,8 @@ let uniqueValues = arr.filter((value, index, self) => {
   return self.indexOf(value) === index;
 })
 console.log("Test on unic values 1", uniqueValues);
-
+// Основано на алгоритмі робот функції indexOf, котра шукає індек значення з початку масиву,
+// в наслідок чого всі дублікати після першого співпадіння відсіюються
 //___________________________________________________________________________________
 
 let uniqueValues2 = [...new Set(arr)];
@@ -334,15 +335,15 @@ let age44 = prompt("Сколько Вам лет?", 18);
 
 if (age44 < 18) {
 
-  function welcome() {
-    alert("Привет!");
-  }
+  (function welcome() {
+    console.log("Привет!");
+  })();
 
 } else {
 
-  function welcome() {
-    alert("Здравствуйте!");
-  }
+  (function welcome() {
+    console.log("Здравствуйте!");
+  })();
 }
 
 //!! welcome(); =>// не спрацює оскільки функція оголошена у блоці з if
@@ -450,7 +451,7 @@ function bind3(callcback, context) {
 }
 
 function test1() {
-  alert(this);
+  console.log(this);
 }
 
 const g = bind3(test1, 'Context');
@@ -528,6 +529,7 @@ let someInfo = {
   name: "John",
   age: 25,
   getUserInfo() {
+    console.warn("Відтерміновані дії")
     console.log(this.name, this.age);
   }
 }
@@ -544,7 +546,7 @@ setTimeout(someInfo.getUserInfo, 1000);
 //                            Задачі
 // 1  Генератор
 //створ ф створення генератору sequence(start, step) При виклику вона викликає другу
-//ф геренратор котра при кожному виклику робе число на 1 більшим донескінченності. Початкові
+//ф геренратор котра при кожному виклику робе число на 1 більшим до нескінченності. Початкові
 //значення та інтервал визначаються при створені геренратору якщо крок не вказаний === 1.
 // початкове значення дефолтно 0
 
@@ -715,3 +717,165 @@ console.log("Прототип та __proto__ об'єкту екз класу", c
 car1.addInsuransePolicy(new InsurancePolicy(1001, "simple"));
 
 console.log(Object.keys(car1), car1);
+
+//                       Map and Set
+const
+  u1 = {name: "Chrysta"},
+  u2 = {name: "Jacob"},
+  u3 = {name: "Olivia"},
+  u4 = {name: "James"}
+
+const userRolesCrastion1 = new Map([
+  [u1, "junior"],
+  [u2, "midle"],
+  [u3, "midle+"]
+]);
+
+console.log(userRolesCrastion1);
+//створення відображення та його методи
+const userRoles = new Map();
+userRoles
+  .set(u1, "jedai")
+  .set(u2, "Yoda")
+  .set(u3, "kid")
+  .set(u4, "Fits")
+
+console.log(userRoles);
+
+let user1Role = userRoles.get(u1);
+console.log(user1Role);
+let user4FirstRole = userRolesCrastion1.get(u4);
+console.log("User - 4 First Role is:", user4FirstRole);
+
+userRoles.delete(u2);
+console.log(userRoles);
+console.log(userRoles.keys());
+console.log(userRoles.values());
+console.log(userRoles.entries());
+
+// специфічне використання .forEach для вдображень
+userRoles.forEach((value, key, map) => {
+  console.log({
+    value: value,
+    key: key,
+    map: map
+  })
+})
+
+let entries = Object.entries(car1);
+console.log(entries);
+
+const derivativeMap = new Map(entries);
+
+console.log(derivativeMap);
+
+// Створення об'єкту на основі відображення
+const objFromMap = Object.fromEntries(derivativeMap);
+console.log(objFromMap);
+
+
+//      Set
+const setExample = new Set();
+
+setExample.add("A");
+setExample.add("B");
+setExample.add("C");
+setExample.add("D");
+
+console.log(setExample);
+console.log(setExample.keys());
+console.log(setExample.values());
+console.log(setExample.entries());
+
+//WeakMap
+
+let userArr = [
+  {n: "John"},
+  {n: "Olga"},
+  {n: "Serge"}
+]
+
+const weakMapEx1 = new WeakMap();
+// const weakMapEx2 = new WeakMap();
+
+userArr.forEach((el, index) => {
+  weakMapEx1.set(el, (index + 1));
+})
+//**Якщо залишити перебір forEach як є то до відображення в консолі покаже об'єкти не послідовно */
+
+// for(let i = 0; i < userArr.length; i++) {
+//   weakMapEx2.set(userArr[i], (i + 1));
+// }
+console.log(weakMapEx1);
+// console.log(weakMapEx2);
+let deleted;
+setTimeout(() => {
+  deleted = userArr.splice(0, 1);
+  console.log(deleted, userArr);
+  console.log(weakMapEx1, weakMapEx1.has(deleted[0]), weakMapEx1.has(userArr[1]));
+  }, 3000)
+
+// Доцільність використання не зрозуміла, як перевірити наявність об'єкту в weakMap через
+// метод .has() якщо на нього не повинно залишатись посилань
+
+
+//-------------------------Exeption handling(Обробка помилок та виключення)---------------------------------------
+
+let serverResponse = {"age": 30 };
+try {
+  let user = JSON.parse(serverResponse);
+  if (!user.age) {
+    throw new SyntaxError('В отриманних данних ве вказано вік!');
+  }
+  console.log(user.age);
+} catch(e) {
+  console.error(`Отакої ${e.name} ${e.message} ${e.fileName} `);
+}
+
+function errorStateA () {
+  console.log("a calls b");
+  errorStateB();
+  console.log("a: finished");
+}
+
+function errorStateB() {
+  console.log("b calls c");
+  errorStateC();
+  console.log("b: finished");
+}
+
+function errorStateC() {
+  console.log("c: error generator");
+  throw new Error("Error in c function")
+  console.log("c: finished");
+}
+
+function errorStateD() {
+  console.log("d calls c");
+  errorStateC();
+  console.log("d: finished");
+}
+
+try {
+  errorStateA();
+} catch (err) {
+  console.log(err.stack)
+}
+
+try {
+  errorStateD();
+} catch (err) {
+  console.log(err.stack)
+}
+
+
+// * try - catch - finally
+try {
+  console.log("Start try - catch - finally");
+  throw new Error("Error emited");
+  //неактивний код
+} catch(err) {
+  console.log("обробка помилки");
+} finally {
+  console.log("Finally block for unsubscribing");
+}
