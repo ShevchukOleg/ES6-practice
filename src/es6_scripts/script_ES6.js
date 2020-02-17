@@ -879,3 +879,78 @@ try {
 } finally {
   console.log("Finally block for unsubscribing");
 }
+
+//------------------------Object.assign(obj1, obj2, obj3)
+const obj991 = {
+  name: "John",
+  age: 28
+}
+
+const obj991Role = {
+  post: "M",
+  role: "midle"
+}
+
+const obj991t = Object.assign({}, obj991);
+
+obj991t.name = "Mary";
+
+const objresult = Object.assign(obj991t, obj991Role);
+
+console.log(obj991t, obj991, objresult)
+
+let [Aaa, Bbb, Ccc] = "ghj"
+
+console.log(Aaa, Bbb, Ccc);
+
+[objresult.name, objresult.age] = ["Elice", 40];
+console.log(objresult);
+
+const objSpesial = {
+  feature: "Main",
+  publisher: true
+}
+let id = 123;
+const employee = {...objresult, ... objSpesial, id};
+
+console.log(employee);
+
+//Object creation with prototipe using pseudo constructor function
+function CreateObjWithPrototipe(name, func) {
+  this.name = name;
+  this.func = func;
+}
+
+CreateObjWithPrototipe.prototype.doSmth = function() {console.log(this.name, this.func)} ;
+
+const testObjCreation = new CreateObjWithPrototipe("John", "I`m working");
+testObjCreation.doSmth();
+
+// Object creation with inheritance
+
+class SuperObj {
+  constructor() {
+    this.id = Math.round(Math.random()*10);
+  }
+
+  doSmth() {
+    console.log(this.name, this.func, this.id);
+  }
+};
+
+class CreateObjWithInheritancePrototipe extends SuperObj {
+  constructor(name, func) {
+    super();
+    this.name = name;
+    this.func = func;
+  }
+}
+
+const testObjCreation2 = new CreateObjWithInheritancePrototipe("Olivia", "Good day");
+testObjCreation2.doSmth();
+
+//---------------------Array creation method
+const expArr = Array(5); // - створення пустого масиву довжиною в 5 значень
+console.log(expArr);
+expArr.fill(0); // -заповнення значеннями
+console.log(expArr);
