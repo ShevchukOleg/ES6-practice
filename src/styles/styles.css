@@ -4,3 +4,16 @@ p {
   6px 6px 8px -4px rgba(255,255,0,0.75),
   -6px 6px 8px -4px rgba(0,0,255,0.75);
 }
+
+.parent {
+  background-color: black;
+  box-sizing: border-box;
+  width: 1000px;
+  padding: 40px;
+}
+
+.child {
+  position: absolute;
+  background-color: chocolate;
+  z-index: 10;
+}

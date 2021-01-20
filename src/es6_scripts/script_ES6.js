@@ -1,4 +1,23 @@
 'use strict'
+
+console.log(0.2 + 0.1);
+let xx = 0;
+let zz = 0;
+labelCancelLoops: while (true) {
+  console.log('Outer loops: ' + xx);
+  xx += 1;
+  zz = 1;
+  while (true) {
+    console.log('Inner loops: ' + zz);
+    zz += 1;
+    if (zz === 10 && xx === 10) {
+      break labelCancelLoops;
+    } else if (zz === 10) {
+      break;
+    }
+  }
+}
+
 //                                      Game crown anchored
 
 
@@ -99,6 +118,18 @@ console.log(unique1(arr));
 console.log('Result: ', strExmpl.substr(4));
 console.log(typeof NaN);
 
+// Фільтація мсиву
+
+const numberArr = [1, 5, 8, 13, 35, 556, 329, 1, 513, 56, 31, 38, 516, 5398]
+const newNumberArr = numberArr.sort((prev, next) => {
+  return next - prev;
+})
+let findResult = numberArr.find((item, i, arr) => {
+  return !(item % 2);
+})
+
+console.log(newNumberArr, findResult);
+
 //               Обчислення дисперсії
 const data = [3.3, 5, 7.2, 12, 4, 6, 10.3];
 
@@ -118,7 +149,7 @@ if (stats.N > 2) {
 
 console.log(stats);
 
-//      Валидатор дан больщие и малые буквы англ, знаки и цыфры макс 6 знаков
+//      Валидатор даны больщие и малые буквы англ, знаки и цыфры макс 6 знаков
 
 let str7 = 'zxcbvnb756453';
 let str8 = 'zxcBvnb75$6453'
@@ -147,8 +178,20 @@ useSpread(...data);
 let [...el] = document.querySelectorAll('div')
 console.log(el);
 
+const elOptions = {
+  size: {
+    width: "100px",
+    height: "20px"
+  },
+  subitems: [
+    "<p>Some text</p>",
+    "<a href='someUrl'>Click</a>"
+  ]
+}
 
+let { size: { width: w = "50px", height: h = "10px" }, subitems: [subitem_1, subitem_2] } = elOptions;
 
+console.log(w, h, subitem_1, subitem_2);
 // Проверка слова на паллиндром
 
 const palindrome = str => {
@@ -207,20 +250,54 @@ const anagram = (str1, str2) => {
   const firstCharObject = buildCharObject(str1);
 
   const secondCharObject = buildCharObject(str2);
+  let result;
 
   if (Object.keys(firstCharObject).length !== Object.keys(secondCharObject).length) {
     return false;
   }
   // Object.keys - повертає масив ключів об'єкту у суворому порядку
   for (let char in firstCharObject) {
+    console.log(char);
     if (firstCharObject[char] !== secondCharObject[char]) {
       return false;
     }
-    return true;
+    result = true;
   }
+  return result;
 }
 
 console.log('Перевірка на анаграму:', anagram('some', 'omes'));
+
+//Named Function Expresion
+let greatFunc = function funcHello(person) {
+  if (person) {
+    console.log(`Hello, ${person}`);
+  } else {
+    funcHello("Guest"); // Теперь всё в порядке
+  }
+}
+
+const welcomePerson = greatFunc;
+
+greatFunc = null;
+
+welcomePerson();
+
+
+//Область видимості та хойстинг
+const xxx = 3;
+function shower() {
+  console.log(`Икс равен ${xxx}`);
+  console.log(`Икс равен ${yyy}`);
+  console.log(`Икс равен ${zzz}`);
+}
+const yyy = 5;
+try {
+  shower();
+} catch (err) {
+  console.warn(err);
+}
+const zzz = 10;
 
 //                        Пошук голосних букв у строці
 const findVowels = str => {
@@ -534,6 +611,20 @@ let someInfo = {
   }
 }
 
+someInfo.getUserInfo();
+
+
+const anotherInfo = {
+  name: "Elena",
+  age: 23,
+  info() {
+    return someInfo.getUserInfo.call(this);
+  }
+}
+// someInfo.getUserInfo.call(anotherInfo);
+
+anotherInfo.info();
+
 // setTimeout(someInfo.getUserInfo, 1000);
 // Втрата контексту this = window / (undefined)
 
@@ -541,6 +632,23 @@ someInfo.getUserInfo = someInfo.getUserInfo.bind(someInfo);
 // суть методу функції перезаписана на вконання з суровою прив'язкою
 
 setTimeout(someInfo.getUserInfo, 1000);
+
+
+
+const verifObj = {
+  gr(name) {
+    console.log('gr: ', name);
+  },
+
+  grA(names) {
+    names.forEach(function (name) {
+      this.gr(name);
+    }, this);
+  }
+  //!! без this  буде втрата контексту виконання, тоді треба викор ф. зі стрілочною нотацією
+};
+
+verifObj.grA(['A', 'B', 'C', 'D', 'E']);
 
 
 //                            Задачі
@@ -617,13 +725,14 @@ hoist();
 
 // ** console.log(abatractVariable);  не спрацює через use strict в ES5 було доступним
 /*
-Доступ как к глобальной переменной вне функции hoist()
-Выводит: 20
+Доступ як до глобальної змінної кпоза ф. hoist()
+ES-5 видасть: 20
 */
-// console.log(betaVariable);
+// console.log(betaVariable); - помилкаоскільки змінна закриа у функціональній області видимості
 
 let array1a = ['a', 'b', 'c', 'd', 'e'];
-console.log(array1a.copyWithin(1, 3))
+console.log(array1a.copyWithin(1, 3)) //["a", "d", "e", "d", "e"] додає дрібну копію частини масиву в іншу позицію в тому ж масиві та повертає його без зміни довжини
+//arr.copyWithin(target[, start[, end]]) target - індекс з якого треба вставити послідовніість start, end - описують відрізок копії
 
 //       Прототипне спадкування та властивості-акцессори
 let userA1 = {
@@ -894,10 +1003,11 @@ const obj991Role = {
 const obj991t = Object.assign({}, obj991);
 
 obj991t.name = "Mary";
+console.log(obj991t);
 
 const objresult = Object.assign(obj991t, obj991Role);
 
-console.log(obj991t, obj991, objresult)
+console.log(obj991, obj991t, objresult)
 
 let [Aaa, Bbb, Ccc] = "ghj"
 
@@ -915,6 +1025,30 @@ const employee = { ...objresult, ...objSpesial, id };
 
 console.log(employee);
 
+// Inaccuracy in the use of the method Object.assign:
+const objA1 = {
+  id: "A1",
+  value: {
+    type: "normal",
+    color: "green"
+  }
+}
+
+const objB1 = {
+  id: "B1",
+  value: {
+    type: "danger",
+    color: "red",
+    action: "throwError"
+  }
+}
+
+const concatObj = Object.assign({}, objA1, objB1);
+console.log(concatObj);
+
+concatObj.value.color = "rosy";
+console.log(objA1, objB1);
+// !! An internal object mutation will occur in objB1
 //Object creation with prototipe using pseudo constructor function
 function CreateObjWithPrototipe(name, func) {
   this.name = name;
@@ -977,31 +1111,45 @@ const book = [
 ];
 
 /**
- * створення двох окремих зразків ітераторів для відокремленних викликів
+ * створення окремих зразків ітераторів для окремих викликів
  */
 const it1 = book.values();
 const it2 = book.values();
+const it5 = book.entries();
 /**
- * присвоєння рузільтату виклику ітератора до змінної
+ * присвоєння рузільтату виклику ітератора змінним
  */
 let current = it1.next();
 let bookmark = it2.next();
+let altern = it5.next();
+
+console.log(altern);
 /**
  * перебір колекції з виводом результату роботи першого ітератора
  */
+console.log("Початок виводу значень через цикл1")
 for (let i = 0; i <= book.length; i++) {
-  console.log(current = it1.next());
+  console.log(current);
+  current = it1.next()
 }
-
+/**
+ * Для методу .entries()
+ */
+console.log("Початок виводу значень через цикл2 з entries")
+for (let value of book.entries()) {
+  console.log(value[0], value[1]);
+}
 /**
  * використання іншого циклу перебору колекції для отримання лище ключових значень через ітератор
  */
-for (const value of it2) {
+console.log("Початок виводу значень через цикл3")
+for (const value of book.values()) {
   console.log(value);
 }
 /**
  * аналог перебору через while
  */
+console.log("Початок виводу значень через цикл4")
 while (!bookmark.done) {
   console.log(bookmark.value);
   bookmark = it2.next();
@@ -1066,9 +1214,15 @@ class FibonacciSequence {
     let a = 0, b = 1;
     return {
       next() {
-        let rval = { value: b, done: false };
-        b += a;
-        a = rval.value;
+        let rval;
+        if (a == 0 && b == 1) {
+          rval = { value: a, done: false };
+          a = b;
+        } else {
+          rval = { value: b, done: false };
+          b += a;
+          a = rval.value;
+        }
         return rval;
       }
     };
@@ -1080,7 +1234,7 @@ let fib = new FibonacciSequence();
 let cycles = 0;
 for (let n of fib) {
   console.log(n);
-  if (++cycles > 10) break;
+  if (++cycles > 100) break;
 }
 
 //                     Генератори
@@ -1099,7 +1253,7 @@ function* colors() {
 }
 
 /**
- * генерація ітератора з генератору
+ * Створення ітератора з генератору
  */
 const it3 = colors();
 
@@ -1118,15 +1272,264 @@ for (let color of colors()) {
 //Двосторонній звязок генератору з простором виклику через механізм роботи yield
 
 //Послідовність викликів з пердачою значення на проміжному єтапі
+console.log('Демонстрація роботи генератору');
 function* interrogate() {
+  console.log('Genetator starts');
   const name = yield 'Your name?';
+  console.log('Value resived from second call:', name);
   const color = yield 'Your favorite color?';
+  console.log('Value resived from third call:', color);
   console.log(`${name}, your color is ${color}.`);
   return `${name}, your color is ${color}.`;
+  //проте ключове return нічого не повертає  а лише зупиняє роботу генератору
 }
 
 const it4 = interrogate();
 
-console.log(it4.next());
-console.log(it4.next('John'));
-console.log(it4.next('Green'));
+console.log('First response:', it4.next());
+console.log('Second response, sent value: John', it4.next('John'));
+console.log('Third response, sent value: Green', it4.next('Green'));
+console.log(it4);
+
+function* takeItem(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    yield arr[i];
+  }
+}
+
+const someItems = ["Tom", "Bob", "Sam", "Alice", "Kate", "Ann"];
+
+const userGenerator = takeItem(someItems);
+
+let timer = setInterval(function () {
+  let user = userGenerator.next();
+  if (user.done) {
+    clearInterval(timer);
+    console.log("The End...");
+  } else {
+    console.log(user.value);
+  }
+}, 100);
+
+
+
+// ** Генератор постійної видачі значень:
+
+const seqGen = function* sequence_0() {
+  let value = 0;
+  while (true) {
+    yield value++;
+  }
+}()
+
+function getSequence_0Value() {
+  console.log(seqGen.next().value)
+}
+
+const timer_2 = setInterval(getSequence_0Value, 500);
+
+function stopTimer2() {
+  clearInterval(timer_2)
+}
+
+setTimeout(stopTimer2, 5000);
+
+
+
+// ------------------------------- Типи функцій
+//  Приклад чистої функції-генератору зі змінними що поміщені в замикання, без побічних ефектів
+/**
+ * завжди повертає ітератор
+ * безпечно незалежно нема доступу до значень та стану ззовні
+ */
+function getRainbowIterator() {
+  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'violet'];
+  let colorIndex = -1;
+  return {
+    next() {
+      if (++colorIndex >= colors.length) colorIndex = 0;
+      return { value: colors[colorIndex], done: false };
+    }
+  };
+}
+
+const rainbowIterator = getRainbowIterator();
+setInterval(function () {
+  document.querySelector('.rainbow').style['background-color'] = rainbowIterator.next().value;
+}, 500)
+
+
+setTimeout(() => {
+  console.log('Action 1');
+})
+
+Promise.resolve().then(() => {
+  console.log('Action 2');
+})
+
+console.log('Action 3');
+
+function exampleFunc() {
+  return true;
+}
+
+console.log(typeof exampleFunc, exampleFunc instanceof Object);
+
+// Проблема втрати стану змінної через global scope для асинхронног таймеру
+var moment;
+for (moment = 5; moment >= 0; moment--) {
+  setTimeout(
+    function () {
+      console.log(moment === 0 ? "Start" : moment);
+    }, (5 - moment) * 100
+  )
+}
+
+
+// Замикання та сворення окремих областей видимості в циклі функції
+function loopBody(i) {
+  setTimeout(function () {
+    console.log(i === 0 ? "Start" : i);
+  }, (5 - i) * 100);
+}
+
+var loopI;
+for (loopI = 5; loopI >= 0; loopI--) {
+  loopBody(loopI);
+}
+// IIFE
+var loopN;
+for (loopN = 5; loopN >= 0; loopN--) {
+  console.log('Ітаратор рівний', loopN);
+
+  (
+    function (i) {
+      setTimeout(function () {
+        console.log(i === 0 ? "Start" : i);
+      }, (5 - i) * 100);
+    }
+  )(loopN);
+}
+
+// Інкапсуляція проміжного значення через let змінну
+// !! Якщо використати змінну з global scope помилка залишиться, інкапсуляція стану не відбудеться
+for (let iter = 5; iter >= 0; iter--) {
+  setTimeout(
+    function () {
+      console.log(iter === 0 ? "Start" : iter);
+    }, (5 - iter) * 100
+  )
+}
+
+// Конвеєри функцій
+let paragraphM = document.querySelector('.message');
+let btnStartMod = document.querySelector('button[type = "button"]');
+btnStartMod.addEventListener("click", startModification);
+console.log(paragraphM, btnStartMod);
+const actionSet = [
+  function addModifiedAtribute(el) {
+    if (el.hasAttribute('modified')) {
+      const before = el.getAttribute('modified')
+      return el.setAttribute('modified', !before)
+    }
+    return el.setAttribute('modified', true);
+  },
+  function addDataAttribute(el) {
+    return el.dataset.js = true;
+  }
+]
+
+function startModification(e) {
+  e.stopPropagation();
+  console.log("Modification start");
+  for (let f of actionSet) {
+    paragraphM = f(paragraphM);
+  }
+  console.log("Modification end")
+}
+
+const regExp = /ab+c/; /abc/
+const regExp2 = new RegExp("ab+c");
+
+(function rendomGenerator() {
+  let randomArr = [];
+  for (let i = 0; i < 21; i++) {
+    let number = Math.ceil(Math.random() * 1000);
+    randomArr.push(number);
+  }
+  console.log(randomArr);
+})();
+
+const json = '{ "products": [{"name": "CB w-125/Wood", "form": "на прокол", "size": "32L","producedIn": "Италия", "price": 13, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/24.07.20/CB%20w-125-Wood-32L-600x450.jpg"}, {"name": "CB K-15/Clear", "form": "на прокол", "size": "36L", "producedIn": "Италия", "price": 6.5, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/24.07.20/CB%20K-15-Clear-36L-600x450.jpg"}, { "name": "CB H-01/01-Black", "form": "на прокол", "size": "36L", "producedIn": "Италия", "price": 33, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/24.07.20/CB%20H-01-01-Black-36L-600x450.jpg" }, { "name": "CN 2578/col.B-Royal", "form": "на прокол", "size": "24L", "producedIn": "Италия", "price": 11.5, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/04.06.20/123/IMG_2699-1200x900.jpg" }, { "name": "CR P-33/col.07", "form": "на ножке", "size": "28L", "producedIn": "Италия", "price": 7, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/04.06.20/123/IMG_2809-600x450.jpg" }, { "name": "ME 617/OB", "form": "на ножке", "size": "32L", "producedIn": "Италия", "price": 23, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/29.01.20/ME%20617-OB-32L-1200x900.jpg" }, { "name": "CR P-33/col.08", "form": "на ножке", "size": "28L", "producedIn": "Италия", "price": 7, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/04.06.20/123/IMG_2775-1200x900.jpg" }, { "name": "CB 3423/col.380", "form": "на ножке", "size": "36L", "producedIn": "Италия", "price": 11, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/04.06.20/123/IMG_2571-1200x900.jpg" }, { "name": "ME 555/Indigo", "form": "на ножке", "size": "36L", "producedIn": "Италия", "price": 25, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/29.01.20/ME%20555-Indigo-36L-1200x900.jpg" }, { "name": "CX-0309/col.B", "form": "на ножке", "size": "28L", "producedIn": "Италия", "price": 15, "image": "https://maxaon.net.ua/image/cache/catalog/photo/Pugovitsyi/detskie/F27tQ-jt8bQ-1200x900.jpg" }]}';
+let productsDesctiption = JSON.parse(json);
+(function genStatObject(days, products) {
+  console.log(products);
+  let sales = [];
+  //** Початок створення БД
+  for (let day = 1; day <= days; day++) {
+    const daySales = {};
+    daySales.date = day;
+    daySales.totalRevenue = 0;
+    daySales.salesReport = [];
+
+    function salesRank(day_sales) {
+      day_sales.salesReport.sort((day1, day2) => {
+        return day2.sales - day1.sales;
+      })
+    }
+
+    for (let product of products.products) {
+      const value = Math.ceil(Math.random() * 1000)
+      const productReport = {};
+      productReport.name = product.name;
+      productReport.price = product.price
+      productReport.sales = value;
+      productReport.revenue = productReport.sales * product.price;
+      daySales.salesReport.push(productReport);
+      daySales.totalRevenue += value * product.price;
+    }
+    //rank
+    salesRank(daySales);
+    sales.push(daySales);
+  }
+  //** Кінець створення БД
+
+  function createMonthReport() {
+    const report = [];
+
+    function productsRevenueRank(aggregatedData) {
+      aggregatedData.sort((prod1, prod2) => {
+        return prod2.salesRevenue - prod1.salesRevenue;
+      })
+    }
+
+
+    for (let product of products.products) {
+      const productMonthReport = {
+        name: '',
+        price: 0,
+        sales: 0,
+        revenue: 0
+      }
+      for (let day of sales) {
+        const productData = day.salesReport.find((productDayReport) => productDayReport.name === product.name);
+        if (productMonthReport.name === '') {
+          productMonthReport.name = product.name;
+          productMonthReport.price = product.price;
+        }
+        productMonthReport.sales += productData.sales;
+        productMonthReport.revenue += productData.revenue;
+      }
+      report.push(productMonthReport);
+      productsRevenueRank(report);
+    }
+    console.log(JSON.stringify(report));
+  }
+
+  console.log(JSON.stringify(sales));
+
+  createMonthReport();
+
+
+
+})(21, productsDesctiption);
